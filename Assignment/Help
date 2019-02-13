@@ -1,0 +1,336 @@
+Assignment Machine Learning Help:
+https://medium.com/towards-data-science/machine-learning-nlp-text-classification-using-scikit-learn-python-and-nltk-c52b92a7c73a
+http://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_files.html
+http://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
+http://www.bogotobogo.com/python/NLTK/Stemming_NLTK.php
+http://www.geeksforgeeks.org/removing-stop-words-nltk-python/
+
+
+Code:
+>>> from sklearn.datasets import load_files
+>>> train_data = load_files('train', load_content=True, encoding = 'utf-8')
+## The returned dataset is a scikit-learn “bunch”: a simple holder object with fields that can be both accessed as python dict keys or object attributes for convenience, for instance the target_names holds the list of the requested category names:
+>>> train_data.target_names
+>>> print(train_data.data[0])
+>>> print(train_data.target_names[train_data.target[0]])
+##The last two lines of codes returns the  fist text and the corresponding class name.
+
+>>> from nltk.tokenize import word_tokenize
+>>> from nltk.corpus import stopwords
+>>> import string
+>>> import re
+>>> lower = train_data.data[0].lower()
+>>> stop_words = set(stopwords.words('english'))
+>>> stop_words.update(('and','so','arnt','this','when','it','many','so','cant','yes','no','these'))
+
+>>> stop = stopwords.words('english') + list(string.punctuation)
+>>> d = [i for i in word_tokenize(lower) if i not in stop]
+>>> lower =  re.sub(r'\d+', '', lower)
+>>> def stem_tokens(tokens, stemmer):
+...     stemmed = []
+...     for item in tokens:
+...         stemmed.append(stemmer.stem(item))
+...     return stemmed
+>>> stemmer = PorterStemmer()
+>>> tokens=d
+>>> stemmed = stem_tokens(tokens, stemmer)
+>>>for i in range (0,len(tokens)-1):
+...     print((tokens[i],stemmed[i]))
+
+
+##1. Remove The Stop Words From The Raw Text After Tokenization And Then Map Each Token To Its
+Stem Using A Stemming Algorithm.
+
+>>>for i in range (0,len(train_data.data)):
+...     train_data.data[i] = train_data.data[i].lower()
+>>> for i in range (0,len(train_data.data)):
+...     train_data.data[i] =  re.sub(r'\d+', '', train_data.data[i])
+>>> raw_docs = train_data.data
+>>> from nltk.tokenize import word_tokenize
+
+>>> tokenized_docs = [word_tokenize(doc) for doc in raw_docs]
+>>> print(tokenized_docs[0])
+>>> import re
+>>> import string
+>>> regex = re.compile('[%s]' % re.escape(string.punctuation)) #see documentation here: http://docs.python.org/2/library/string.html
+
+>>> tokenized_docs_no_punctuation = []
+
+>>> for review in tokenized_docs:
+    
+...    new_review = []
+...    for token in review: 
+...        new_token = regex.sub(u'', token)
+...        if not new_token == u'':
+...            new_review.append(new_token)
+...    tokenized_docs_no_punctuation.append(new_review)
+###############################################################################################################################
+                          OUTPUT
+                          
+>>> print(tokenized_docs[0])
+['peru', 'coffee', 'crop', 'unaffected', 'by', 'rains', 'lima', ',', 'march', '-', 'recent', 'heavy', 'rains', 'have', 'not', 'affected', 'the', 'peru', 'coffee', 'crop', 'and', 'producers', 'are', 'looking', 'forward', 'to', 'a', 'record', 'harvest', ',', 'the', 'president', 'of', 'one', 'of', 'peru', "'s", 'four', 'coffee', 'cooperative', 'groups', 'said', '.', 'justo', 'marin', 'ludena', ',', 'president', 'of', 'the', 'cafe', 'peru', 'group', 'of', 'cooperatives', 'which', 'accounts', 'for', 'about', 'pct', 'of', 'peru', "'s", 'exports', ',', 'told', 'reuters', 'a', 'harvest', 'of', 'up', 'to', ',', ',', 'quintales', '(', 'kilos', ')', 'was', 'expected', 'this', 'year', '.', 'he', 'said', 'peru', 'exported', ',', ',', 'quintales', 'in', 'the', 'year', 'to', 'september', '.', 'a', 'spokesman', 'for', 'the', 'villa', 'rica', 'cooperative', 'said', 'flood', 'waters', 'last', 'month', 'had', 'not', 'reached', 'coffee', 'plantations', ',', 'and', 'the', 'crop', 'was', 'unaffected', '.', 'floods', 'in', 'early', 'february', 'caused', 'extensive', 'damage', 'in', 'villa', 'rica', ',', 'whose', 'coffee', 'cooperative', 'exported', ',', 'quintales', 'last', 'year', ',', 'according', 'to', 'the', 'state-controlled', 'coffee', 'organisation', '.', 'marin', 'said', 'the', 'rains', 'would', 'only', 'affect', 'the', 'coffee', 'crop', 'if', 'they', 'continued', 'through', 'to', 'next', 'month', ',', 'when', 'harvesting', 'starts', '.', 'he', 'said', 'peruvian', 'producers', 'were', 'hoping', 'for', 'an', 'increase', 'this', 'year', 'in', 'the', '.', 'pct', 'export', 'quota', ',', 'about', ',', 'quintales', ',', 'assigned', 'to', 'them', 'by', 'the', 'international', 'coffee', 'organisation', ',', 'ico', '.', 'he', 'said', 'peru', 'exported', ',', ',', 'quintales', 'to', 'ico', 'members', 'last', 'year', 'with', 'a', 'value', 'of', 'around', 'mln', 'dlrs', ',', 'and', 'another', ',', 'quintales', ',', 'valued', 'at', 'around', 'mln', 'dlrs', ',', 'to', 'non-ico', 'members', '.']
+##############################################################################################################################                          
+
+
+
+
+
+
+>>> from nltk.corpus import stopwords
+
+>>> tokenized_docs_no_stopwords = []
+>>> for doc in tokenized_docs_no_punctuation:
+...    new_term_vector = []
+...    for word in doc:
+...        if not word in stopwords.words('english'):
+...            new_term_vector.append(word)
+...    tokenized_docs_no_stopwords.append(new_term_vector)
+            
+>>> print(tokenized_docs_no_stopwords[0])
+###############################################################################################################################
+                                              OUTPUT
+                                              
+>>> print(tokenized_docs_no_stopwords[0])
+['peru', 'coffee', 'crop', 'unaffected', 'rains', 'lima', 'march', 'recent', 'heavy', 'rains', 'affected', 'peru', 'coffee', 'crop', 'producers', 'looking', 'forward', 'record', 'harvest', 'president', 'one', 'peru', 'four', 'coffee', 'cooperative', 'groups', 'said', 'justo', 'marin', 'ludena', 'president', 'cafe', 'peru', 'group', 'cooperatives', 'accounts', 'pct', 'peru', 'exports', 'told', 'reuters', 'harvest', 'quintales', 'kilos', 'expected', 'year', 'said', 'peru', 'exported', 'quintales', 'year', 'september', 'spokesman', 'villa', 'rica', 'cooperative', 'said', 'flood', 'waters', 'last', 'month', 'reached', 'coffee', 'plantations', 'crop', 'unaffected', 'floods', 'early', 'february', 'caused', 'extensive', 'damage', 'villa', 'rica', 'whose', 'coffee', 'cooperative', 'exported', 'quintales', 'last', 'year', 'according', 'statecontrolled', 'coffee', 'organisation', 'marin', 'said', 'rains', 'would', 'affect', 'coffee', 'crop', 'continued', 'next', 'month', 'harvesting', 'starts', 'said', 'peruvian', 'producers', 'hoping', 'increase', 'year', 'pct', 'export', 'quota', 'quintales', 'assigned', 'international', 'coffee', 'organisation', 'ico', 'said', 'peru', 'exported', 'quintales', 'ico', 'members', 'last', 'year', 'value', 'around', 'mln', 'dlrs', 'another', 'quintales', 'valued', 'around', 'mln', 'dlrs', 'nonico', 'members']
+       ################################################################################################################################                                       
+
+
+
+
+
+
+
+
+
+>>> from nltk.stem.porter import PorterStemmer
+>>> porter = PorterStemmer()
+>>> preprocessed_docs = []
+>>> for doc in tokenized_docs_no_stopwords:
+...    final_doc = []
+...    for word in doc:
+...        final_doc.append(porter.stem(word))
+...    preprocessed_docs.append(final_doc)
+>>> print(preprocessed_docs)
+>>> for i in range (0,len(preprocessed_docs)):
+...      d = preprocessed_docs[i]
+...      e = tokenized_docs_no_stopwords[i]
+...      for j in range (0,len(d)):
+...          print((d[j],e[j]))
+
+################################################################################################################################
+        OUTPUT
+ >>> for j in range (0,(len(d)-1)):
+...     print((d[j],e[j]))
+... 
+('peru', 'peru')
+('coffe', 'coffee')
+('crop', 'crop')
+('unaffect', 'unaffected')
+('rain', 'rains')
+('lima', 'lima')
+('march', 'march')
+('recent', 'recent')
+('heavi', 'heavy')
+('rain', 'rains')
+('affect', 'affected')
+('peru', 'peru')
+('coffe', 'coffee')
+('crop', 'crop')
+('produc', 'producers')
+('look', 'looking')
+('forward', 'forward')
+('record', 'record')
+('harvest', 'harvest')
+('presid', 'president')
+('one', 'one')
+('peru', 'peru')
+('four', 'four')
+('coffe', 'coffee')
+('cooper', 'cooperative')
+('group', 'groups')
+('said', 'said')
+('justo', 'justo')
+('marin', 'marin')
+('ludena', 'ludena')
+('presid', 'president')
+('cafe', 'cafe')
+('peru', 'peru')
+('group', 'group')
+('cooper', 'cooperatives')
+('account', 'accounts')
+('pct', 'pct')
+('peru', 'peru')
+('export', 'exports')
+('told', 'told')
+('reuter', 'reuters')
+..............................
+ ###########################################################################################################      
+
+>>> stemmed_train = []
+>>> for i in range(0,len(preprocessed_docs)):
+...     d = s.join(preprocessed_docs[i])
+...     stemmed_train.append(d)
+
+##TEST SET PRE-PROCESSING
+ 
+>>> test_data = load_files('test', load_content=True, encoding = 'utf-8')
+>>> for i in range (0,len(test_data.data)):
+...     test_data.data[i] = test_data.data[i].lower()
+... 
+>>> for i in range (0,len(test_data.data)):
+...     test_data.data[i] =  re.sub(r'\d+', '', test_data.data[i])
+... 
+>>> rawtest_docs = test_data.data
+>>> from nltk.tokenize import word_tokenize
+>>> tokenizedtest_docs = [word_tokenize(doc) for doc in rawtest_docs]
+>>> import string
+>>> regex = re.compile('[%s]' % re.escape(string.punctuation))
+>>> tokenizedtest_docs_no_punctuation = []
+>>> len(tokenizedtest_docs)
+185
+>>> for review in tokenizedtest_docs:
+...     test_review = []
+...     for token in review:
+...         new_token = regex.sub(u'', token)
+...         if not new_token == u'':
+...                 test_review.append(new_token)
+...      tokenizedtest_docs_no_punctuation.append(test_review)
+  File "<stdin>", line 7
+    tokenizedtest_docs_no_punctuation.append(test_review)
+                                                        ^
+IndentationError: unindent does not match any outer indentation level
+>>> for review in tokenizedtest_docs:
+...     test_review = []
+...     for token in review:
+...         new_token = regex.sub(u'', token)
+...         if not new_token == u'':
+...                 test_review.append(new_token)
+...     tokenizedtest_docs_no_punctuation.append(test_review)
+... 
+>>> len(tokenizedtest_docs_no_punctuation)
+185
+>>> tokenizedtest_docs_no_stopwords = []
+>>> for doc in tokenizedtest_docs_no_punctuation:
+...     test_term_vector = []
+...     for word in doc:
+...         if not word in stopwords.words('english'):
+...                test_term_vector.append(word)
+...     tokenizedtest_docs_no_stopwords.append(test_term_vector)
+... 
+>>> len(tokenizedtest_docs_no_stopwords)
+185
+>>> porter = PorterStemmer()
+>>> preprocessedtest_docs = []
+>>> for doc in tokenizedtest_docs_no_stopwords:
+...     finaltest_doc = []
+...     for word in doc:
+...         finaltest_doc.append(porter.stem(word))
+...     preprocessedtest_docs.append(finaltest_doc)
+... 
+>>> stemmed_test = []
+>>> for i in range(0,len(preprocessedtest_docs)):
+...      d = s.join(preprocessedtest_docs[i])
+...      stemmed_test.append(d)
+... 
+>>> len(stemmed_test)
+185
+>>> print(stemmed_test[9])
+saudi arabia seek rbd palm olein london april saudi arabia market tonn refin bleach deodoris palm olein june shipment trader said
+>>> 
+
+
+
+
+2. Create The Term-Document Matrix By Using An Efficient Tf-Idf Weighting Scheme.
+ 
+>>> from sklearn.feature_extraction.text import CountVectorizer
+>>> count_vect = CountVectorizer()
+>>> stemmed_train_counts = count_vect.fit_transform(stemmed_train)
+>>> stemmed_train_counts.shape
+    (499, 4615)
+
+>>> from sklearn.feature_extraction.text import TfidfTransformer
+>>> tfidf_transformer = TfidfTransformer()
+>>> stemmed_train_tfidf = tfidf_transformer.fit_transform(stemmed_train_counts)
+>>> stemmed_train_tfidf.shape
+    (499, 4615)
+
+##FOR THE TEST SET 
+>>> stemmed_test_counts = count_vect.fit_transform(stemmed_test)
+>>> stemmed_test_tfidf = tfidf_transformer.fit_transform(stemmed_test_count) 
+>>> stemmed_test_tfidf.shape
+(185, 3035)
+
+
+
+3. Perform Naive Bayes, Logistic Regression, Support Vector Machine And Multilayer Perceptron
+Classifiers To Categorize The Documents In The Test Set Of The Given Reuters Corpus. The Aim
+Is To Achieve The Best Performance For Each Of These Classifiers By Properly Tuning Its
+Parameters And By Choosing An Efficient Version Of The Classifiers Using The Training Set Of The
+Given Corpus. Properly Explain Your Selection Using Experimental Results. You May Consider
+Different Types Of Feature Combinations E.G., Unigrams , Bigrams Etc.
+
+
+Naive Bayes:
+
+>>> from sklearn.naive_bayes import MultinomialNB
+>>> clf = MultinomialNB().fit(stemmed_train_tfidf, train_data.target)
+>>> predicted = clf.predict(stemmed_train_tfidf)
+>>> import numpy as np
+>>> np.mean(predicted == train_data.target)
+     train set : 76.15%
+>>> from sklearn.metrics import precision_score, recall_score, f1_score
+>>> pr=precision_score(train_data.target, predicted, average='micro')
+>>> print('\n Train Set Precision:'+str(pr))
+
+ Train Set Precision:0.761523046092
+>>> re=recall_score(train_data.target, predicted, average='micro')
+>>> print('\n Train Set Recall:'+str(re))
+
+ Train Set Recall:0.761523046092
+>>> fm=f1_score(train_data.target, predicted, average='micro')
+>>> print('\n Train Set F-Measure:'+str(fm))
+
+ Train Set F-Measure:0.761523046092
+
+
+
+
+
+GridSearch on Naive Bayes with bigram,trigram:
+
+>>> from sklearn.model_selection import GridSearchCV
+>>> parameters = {'vect__ngram_range': [(1, 1), (1, 2),(1,3)],'tfidf__use_idf': (True, False),'clf__alpha': (1e-2, 1e-3,1),}
+>>> gs_clf = GridSearchCV(text_clf, parameters, n_jobs=-1)
+>>> predicted_train = gs_clf.predict(stemmed_train)
+>>> np.mean(predicted_train == train_data.target)
+      0.88977955911823647
+>>> predicted_test = gs_clf.predict(stemmed_test)
+>>> np.mean(predicted_test == test_data.target)
+      0.69729729729729728
+>>> gs_clf.best_params_
+{'clf__alpha': 0.01, 'tfidf__use_idf': False, 'vect__ngram_range': (1, 1)}
+>>> 
+>>> precision_score(train_data.target, predicted_train, average='micro')
+0.88977955911823647
+>>> precision_score(train_data.target, predicted_train, average='macro')
+0.91162713482850055
+>>> 
+
+
+
+######################################  ALTERNATIVELY #############################################################
+
+>>> from sklearn.pipeline import Pipeline
+>>> text_clf = Pipeline([('vect', CountVectorizer()),('tfidf', TfidfTransformer()),('clf', MultinomialNB()),])
+>>> text_clf = text_clf.fit(stemmed_train,train_data.target)
+>>> predicted_test = text_clf.predict(stemmed_test)
+>>> np.mean(predicted_test == test_data.target)
+0.54054054054054057
+>>> predicted_train = text_clf.predict(stemmed_train)
+>>> np.mean(predicted_train == train_data.target)
+0.76152304609218435
+>>> >>> from sklearn.metrics import confusion_matrix
+>>> confusion_matrix(train_data.target, predicted_train)
+
+
