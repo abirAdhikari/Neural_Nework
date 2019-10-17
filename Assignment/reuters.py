@@ -28,16 +28,16 @@ def build_data_frame(rootdir,data_type):
         i=i+1
     return data_frame
 
-rootdir = "C:\Users\Ritam Majumder\Desktop\mlass\Machine_Learning_Assignments\Assignment_1\reuters_21578_10cat\training"
+rootdir = "C:\Users\Machine_Learning_Assignments\Assignment_1\reuters_21578_10cat\training"
 reuters_train = build_data_frame(rootdir,'train')
-fout = open("C:\Users\Ritam Majumder\Desktop\mlass\Machine_Learning_Assignments\Assignment_1\reuters_train.csv","wb")
+fout = open("C:\Users\Machine_Learning_Assignments\Assignment_1\reuters_train.csv","wb")
 writer = csv.writer(fout)
 writer.writerows(reuters_train)
 fout.close()
 
-rootdir = "C:\Users\Ritam Majumder\Desktop\mlass\Machine_Learning_Assignments\Assignment_1\reuters_21578_10cat\test"
+rootdir = "C:\Users\Machine_Learning_Assignments\Assignment_1\reuters_21578_10cat\test"
 reuters_test = build_data_frame(rootdir,'test')
-fout = open("C:\Users\Ritam Majumder\Desktop\mlass\Machine_Learning_Assignments\Assignment_1\reuters_test.csv","wb")
+fout = open("C:\Users\Machine_Learning_Assignments\Assignment_1\reuters_test.csv","wb")
 writer = csv.writer(fout)
 writer.writerows(reuters_test)
 fout.close()
